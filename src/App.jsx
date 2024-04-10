@@ -64,6 +64,12 @@ function App() {
 
     setSnackbarMessage(`${product.name} added to cart`);
   };
+   // Update body class based on showCart state
+   if (showCart) {
+    document.body.classList.add('body-no-scroll');
+  } else {
+    document.body.classList.remove('body-no-scroll');
+  }
 
   const closeSnackbar = () => {
     setSnackbarMessage('');
