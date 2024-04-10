@@ -1,24 +1,25 @@
 import React, { useState } from 'react';
 import './App.css';
 import ItemCard from './ItemCard';
+import Snackbar from './Snackbar'; // Import Snackbar component
 
 const productsData = [
   {
     image: '/image/dish1.jpg',
-    name: 'crispy potato',
-    price: '$150',
+    name: 'Crispy potato',
+    price: 150, // Numeric price for calculations
     id: 1,
   },
   {
     image: '/image/dishp.jpg',
-    name: 'idli vada',
-    price: '$150',
+    name: 'Idli vada',
+    price: 150,
     id: 2,
   },
   {
     image: '/image/dishk.jpg',
-    name: 'sev puri',
-    price: '$150',
+    name: 'Sev puri',
+    price: 150,
     id: 3,
   },
 ];
@@ -26,20 +27,20 @@ const productsData = [
 const productsData2 = [
   {
     image: '/image/dishw.jpg',
-    name: 'vegetable idli',
-    price: '$150',
+    name: 'Vegetable idli',
+    price: 150,
     id: 4,
   },
   {
     image: '/image/dishj.jpg',
-    name: 'appe',
-    price: '$150',
+    name: 'Appe',
+    price: 150,
     id: 5,
   },
   {
     image: '/image/dishg.jpg',
-    name: 'bread pakoda',
-    price: '$150',
+    name: 'Bread pakoda',
+    price: 150,
     id: 6,
   },
 ];
@@ -47,6 +48,7 @@ const productsData2 = [
 function App() {
   const [cartItems, setCartItems] = useState([]);
   const [showCart, setShowCart] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const addToCart = (product) => {
     const existingItem = cartItems.find((item) => item.id === product.id);
@@ -59,28 +61,20 @@ function App() {
     } else {
       setCartItems([...cartItems, { ...product, quantity: 1 }]);
     }
+
+    setSnackbarMessage(`${product.name} added to cart`);
   };
 
-  const removeFromCart = (productId) => {
-    const updatedCart = cartItems.filter((item) => item.id !== productId);
-    setCartItems(updatedCart);
+  const closeSnackbar = () => {
+    setSnackbarMessage('');
   };
 
-  const clearCart = () => {
-    setCartItems([]);
+  const getTotalQuantity = () => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
 
-  const placeOrder = () => {
-    // Logic to place order (e.g., send cartItems to backend)
-    alert('Order placed successfully!');
-    clearCart();
-  };
-  const toggleCart = () => {
-    setShowCart(!showCart);
-    if (!showCart) {
-      // Clear cart when hiding the cart modal
-      clearCart();
-    }
+  const getTotalSum = () => {
+    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
   return (
@@ -91,27 +85,19 @@ function App() {
           <ul>
             <li>Orders</li>
             <li>Account</li>
-            <li onClick={clearCart}>Clear Cart</li>
-            <li onClick={() => setShowCart(!showCart)}>Cart ({cartItems.length})</li>
+            <li onClick={() => setCartItems([])}>Clear Cart</li>
+            <li onClick={() => setShowCart(!showCart)}>Cart ({getTotalQuantity()})</li>
           </ul>
         </div>
         <div className="center">
           <div className="up">
             {productsData.map((product) => (
-              <ItemCard
-                key={product.id}
-                product={product}
-                addToCart={() => addToCart(product)}
-              />
+              <ItemCard key={product.id} product={product} addToCart={() => addToCart(product)} />
             ))}
           </div>
           <div className="down">
             {productsData2.map((product) => (
-              <ItemCard
-                key={product.id}
-                product={product}
-                addToCart={() => addToCart(product)}
-              />
+              <ItemCard key={product.id} product={product} addToCart={() => addToCart(product)} />
             ))}
           </div>
         </div>
@@ -121,20 +107,42 @@ function App() {
       {showCart && (
         <div className="cart-overlay">
           <div className="cart">
+            <div className="item">
+              
             <h3>Your Cart</h3>
-            <button className='delete' onClick={toggleCart}>❌</button>
+            <button className="delete" onClick={() => setShowCart(false)}>
+              ❌
+            </button>
+            </div>
             {cartItems.map((item) => (
               <div key={item.id} className="cart-item">
+                
                 <img src={item.image} alt={item.name} />
                 <div>{item.name}</div>
-                <div>{item.price}</div>
-                <button onClick={() => removeFromCart(item.id)}>Delete</button>
-                <button onClick={placeOrder}> Order</button>
+                <div>Price: ${item.price}</div>
+                <div>Quantity: {item.quantity}</div>
+                <button onClick={() => setCartItems(cartItems.filter((i) => i.id !== item.id))}>Delete</button>
+                 
               </div>
             ))}
+            <div>Total Quantity: {getTotalQuantity()}</div>
+            <div>Total Sum: ${getTotalSum()}</div>
+            <button className='order'
+              onClick={() => {
+                // Logic to place order (e.g., send cartItems to backend)
+                alert('Order placed successfully!');
+                setCartItems([]);
+              }}
+              disabled={cartItems.length === 0}
+            >
+              Place Order
+            </button>
           </div>
         </div>
       )}
+
+      {/* Snackbar Notification */}
+      {snackbarMessage && <Snackbar message={snackbarMessage} onClose={closeSnackbar} />}
     </>
   );
 }
