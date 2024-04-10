@@ -4,13 +4,13 @@ import ItemCard from './ItemCard';
 
 const productsData = [
   {
-    image: '/image/dish1.jpg',
+    image: './image/dish1.jpg',
     name: 'crispy potato',
     price: '$150',
     id: 1,
   },
   {
-    image: '/image/dishp.jpg',
+    image: './image/dishp.jpg',
     name: 'idli vada',
     price: '$150',
     id: 2,
