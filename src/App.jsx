@@ -4,7 +4,7 @@ import ItemCard from './ItemCard';
 
 const productsData = [
   {
-    image: '${process.env.PUBLIC_URL}/image/dish1.jpg',
+    image: '/image/dish1.jpg',
     name: 'crispy potato',
     price: '$150',
     id: 1,
